@@ -1,0 +1,110 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Plataforma | IBRANUTRO{% endblock %}
+
+{% block body %}
+<div class="platform">
+
+  <div class="header">
+    <div class="header-left">
+      <button class="menu-btn" title="Menu" onclick="toggleSidebar()">☰</button>
+      <img src="{% static 'core/img/logoibranutro.png' %}" class="header-logo" alt="IBRANUTRO">
+    </div>
+
+    <div class="header-actions">
+      <a class="pill-btn" href="{% url 'docs' %}">📚 Documentos</a>
+      <a class="pill-btn primary" href="{% url 'profile' %}">⚙️ Perfil</a>
+
+      <div class="user-pill" title="Usuário logado">
+        <img class="user-mini" alt="Foto" src="{% static 'core/img/logoibranutro.png' %}">
+        <span>{{ request.user.get_username }}</span>
+      </div>
+
+      <!-- Logout precisa ser POST (evita erro 405) -->
+      <form method="post" action="{% url 'logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button class="logout-btn" type="submit">Sair</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar" id="sidebar">
+      <div class="course-header">
+        <div class="course-title">Minhas aulas</div>
+        <div class="progress-info">Selecione uma aula no menu</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="modules-list">
+        {% for course in courses %}
+          <div class="module">
+            <button class="module-header" type="button">
+              <span>{{ course.title }}</span>
+              <span>▼</span>
+            </button>
+
+            <div class="lessons-list active">
+              {% for lesson in course.lessons.all %}
+                <a class="lesson-item {% if current_lesson and lesson.id == current_lesson.id %}active{% endif %}"
+                   href="{% url 'lesson_detail' lesson.id %}">
+                  <div class="lesson-left">
+                    <div class="lesson-icon">▶</div>
+                    <div style="min-width:0;">
+                      <div class="lesson-title">{{ lesson.title }}</div>
+                    </div>
+                  </div>
+                  <div class="lesson-duration">{{ lesson.duration|default:"—" }}</div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="video-area">
+      <div class="video-player">
+        {% if current_lesson and current_lesson.embed_url %}
+          <iframe
+            src="{{ current_lesson.embed_url }}"
+            title="Aula"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        {% else %}
+          <iframe src="" title="Aula"></iframe>
+        {% endif %}
+      </div>
+
+      <div class="player-helpbar">
+        <div class="help-text">
+          Se o vídeo não carregar, use <strong>Abrir no YouTube</strong>.
+        </div>
+        <div class="help-actions">
+          {% if current_lesson and current_lesson.youtube_url %}
+            <a class="small-btn primary" href="{{ current_lesson.youtube_url }}" target="_blank" rel="noopener">Abrir no YouTube</a>
+          {% else %}
+            <a class="small-btn primary" href="#" onclick="return false;">Abrir no YouTube</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="video-info">
+        <h2 class="video-title">
+          {% if current_lesson %}{{ current_lesson.title }}{% else %}Selecione uma aula{% endif %}
+        </h2>
+        <div class="video-meta">Duração: {% if current_lesson %}{{ current_lesson.duration|default:"—" }}{% else %}—{% endif %}</div>
+
+        <div class="video-description">
+          <div class="description-title">Sobre esta aula</div>
+          <p class="description-text">
+            {% if current_lesson %}{{ current_lesson.description|default:"" }}{% else %}Selecione uma aula para ver a descrição.{% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

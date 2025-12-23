@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}IBRANUTRO{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'core/css/ibranutro.css' %}">
+</head>
+<body>
+
+{% block body %}{% endblock %}
+
+<script>
+function toggleSidebar(){
+  const sb = document.getElementById("sidebar");
+  if(!sb) return;
+  sb.classList.toggle("hidden");
+}
+</script>
+
+</body>
+</html>

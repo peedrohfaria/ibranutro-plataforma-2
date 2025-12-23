@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-br">
+<head><meta charset="utf-8"><title>Documentos</title></head>
+<body style="font-family:system-ui;background:#f6f7fb;padding:40px;">
+  <a href="/">← Voltar</a> | <a href="/profile/">Perfil</a> | <form method="post" action="/logout/" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" style="background:none;border:none;color:#06c;cursor:pointer;padding:0;">
+    Sair
+  </button>
+</form>
+
+
+  <h2>Documentos</h2>
+
+  <h3>Novo documento</h3>
+
+<form method="post" action="/docs/new/" enctype="multipart/form-data"
+      style="background:#fff;padding:16px;border-radius:12px;margin-bottom:24px;">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Adicionar</button>
+</form>
+
+<hr style="margin:20px 0;">
+
+  <ul>
+    {% for d in docs %}
+      <li style="margin-bottom:12px;background:#fff;padding:12px;border-radius:10px;">
+  <strong>{{ d.get_category_display }}:</strong> {{ d.title }}
+
+  {% if d.external_url %}
+    - <a href="{{ d.external_url }}" target="_blank">Abrir link</a>
+  {% endif %}
+
+  {% if d.file %}
+    - <a href="{{ d.file.url }}" target="_blank">Baixar</a>
+  {% endif %}
+
+  <div style="color:#666;font-size:12px;margin-top:6px;">
+    {{ d.description }}
+  </div>
+
+  <div style="margin-top:8px;">
+    <a href="/docs/{{ d.id }}/edit/">Editar</a>
+
+    <form method="post" action="/docs/{{ d.id }}/delete/" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit"
+              style="background:none;border:none;color:#c00;cursor:pointer;">
+        Excluir
+      </button>
+    </form>
+  </div>
+</li>
+    {% empty %}
+      <li>Nenhum documento.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

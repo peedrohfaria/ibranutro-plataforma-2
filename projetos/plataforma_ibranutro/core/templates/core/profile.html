@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-br">
+<head><meta charset="utf-8"><title>Perfil</title></head>
+<body style="font-family:system-ui;background:#f6f7fb;padding:40px;">
+  <a href="/">← Voltar</a> | <a href="/docs/">Documentos</a> | <form method="post" action="/logout/" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" style="background:none;border:none;color:#06c;cursor:pointer;padding:0;">
+    Sair
+  </button>
+</form>
+
+
+  <h2>Perfil</h2>
+
+  <form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <h3>Dados do usuário</h3>
+  {{ uform.as_p }}
+
+  <h3>Foto</h3>
+  {% if profile.photo %}
+    <img src="{{ profile.photo.url }}" style="width:90px;height:90px;border-radius:999px;object-fit:cover;">
+  {% endif %}
+  {{ pform.as_p }}
+
+  <button>Salvar</button>
+</form>
+
+</body>
+</html>
